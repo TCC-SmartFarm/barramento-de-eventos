@@ -29,7 +29,7 @@ func main() {
 	configFilas := map[string]string{
 		"fila_influx":    "sensor.#",          // Recebe TUDO (umidade, temperatura, etc)
 		"fila_streaming": "sensor.#",          // Recebe TUDO para o dashboard
-		"fila_cache":     "sensor.*.umidade",  // Recebe APENAS mensagens de umidade (isso é só um exemplo de filtro mais específico)
+		"fila_cache":     "sensor.#",  		   // Recebe TUDO
 	}
 
 	for nomeFila, filtro := range configFilas {
