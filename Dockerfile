@@ -1,8 +1,10 @@
-# Usamos a versão management para ter o painel web
-FROM rabbitmq:3-management
+FROM golang:1.22
 
-# Expomos as portas padrão
-EXPOSE 5672 15672
+WORKDIR /app
 
-LABEL maintainer="Murilo - SmartFarm Mauá"
-LABEL description="RabbitMQ customizado para Barramento de Eventos"
+COPY . .
+
+RUN go mod tidy
+RUN go build -o config-rabbit config_rabbit.go
+
+CMD ["./config-rabbit"]

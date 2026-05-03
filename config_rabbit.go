@@ -3,10 +3,28 @@ package main
 import (
 	"log"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"time"
 )
 
 func main() {
-	conn, err := amqp.Dial("amqp://admin:admin@localhost:5672/")
+	// conn, err := amqp.Dial("amqp://admin:admin@localhost:5672/")
+	var conn *amqp.Connection
+	var err error
+
+	maxRetries := 20
+
+	for i := 0; i < maxRetries; i++ {
+		conn, err = amqp.Dial("amqp://admin:admin@rabbitmq:5672/")
+		if err == nil {
+			log.Println("Conectado!")
+			break
+		}
+
+		log.Println("Erro ao conectar:", err)
+		log.Printf("Tentando novamente em 2 segundos... (%d/%d)", i+1, maxRetries)
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
