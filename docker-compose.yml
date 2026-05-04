@@ -1,7 +1,7 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: barramento-rabbitmq
+    container_name: barramento-de-evevntos
     ports:
       - "5672:5672"   # Porta de comunicação do RabbitMQ
       - "15672:15672" # Porta do Painel de Controle (Interface Web)
@@ -10,9 +10,15 @@ services:
       RABBITMQ_DEFAULT_PASS: admin
     networks:
       - smartfarm-network
+
   
   config-rabbitmq:
     build: ./
     depends_on:
       - rabbitmq
     restart: on-failure
+
+
+networks:
+  smartfarm-network:
+    external: true

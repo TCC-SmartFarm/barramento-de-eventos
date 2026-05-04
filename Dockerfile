@@ -1,10 +1,10 @@
-FROM golang:1.22
+FROM golang:1.24-alpine
 
 WORKDIR /app
 
 COPY . .
 
 RUN go mod tidy
-RUN go build -o config-rabbit config_rabbit.go
+RUN go build -o config_rabbit config_rabbit.go
 
-CMD ["./config-rabbit"]
+CMD ["./config_rabbit"]
