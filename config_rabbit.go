@@ -42,6 +42,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Declarar a FILA e fazer o BIND com a EXCHANGE usando uma ROUTING KEY (filtro)
+	_, err = ch.QueueDeclare("fila_influx", true, false, false, false, nil)
+	if err != nil {
+		log.Printf("Erro ao declarar fila %s: %s", "fila_influx", err)
+	}
+	err = ch.QueueBind(
+		"fila_influx",           // nome da fila
+		"campo.#",              // routing key
+		"telemetria_exchange",   // exchange
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Fatal("Erro no bind:", err)
+	}
+
+
+
 	// // mapa para definir qual Fila escuta qual Tópico
 	// // A chave é o NOME DA FILA e o valor é a ROUTING KEY (o filtro)
 	// configFilas := map[string]string{
