@@ -40,10 +40,10 @@ Simula o comportamento do serviço que receberia dados via MQTT e os injeta no b
 // - "sensor.esp32_01.temperatura"
 ```
 
-O dado é enviado em formato JSON, contendo `sensor_id`, `valor`, `tipo` e `timestamp` (essas chaves vao ser adaptadas).
+O dado é enviado em formato JSON, contendo `deviceId`, `valor`, `tipo` e `timestamp` (essas chaves vao ser adaptadas).
 ```JSON
 {
-  "sensor_id": "string",
+  "deviceId": "string",
   "valor": "float64",
   "tipo": "string",
   "timestamp": "time.Time"
@@ -58,7 +58,7 @@ O serviço de consumo utiliza Goroutines para processar múltiplas filas em para
 |------------------|---------------|--------------------------------------------------------------|
 | saveToInfluxDB   | fila_influx   | Persistência em banco de séries temporais (Cloud).          |
 | streamToFrontend | fila_streaming| Envio de dados em tempo real via WebSockets.                |
-| updateCache      | fila_cache    | Atualização do último estado conhecido no Redis/Cache.      |
+| updateCache      | fila_{userId}    | Atualização do último estado conhecido no Redis/Cache.      |
 
 ## 5. Diagrama de Fluxo Lógico
 O fluxo de dados segue a hierarquia abaixo:
