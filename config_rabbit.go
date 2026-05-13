@@ -42,36 +42,54 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// mapa para definir qual Fila escuta qual Tópico
-	// A chave é o NOME DA FILA e o valor é a ROUTING KEY (o filtro)
-	configFilas := map[string]string{
-		"fila_influx":    "sensor.#",          // Recebe TUDO (umidade, temperatura, etc)
-		"fila_streaming": "sensor.#",          // Recebe TUDO para o dashboard
-		"fila_cache":     "sensor.#",  		   // Recebe TUDO
+	// Declarar a FILA e fazer o BIND com a EXCHANGE usando uma ROUTING KEY (filtro)
+	_, err = ch.QueueDeclare("fila_influx", true, false, false, false, nil)
+	if err != nil {
+		log.Printf("Erro ao declarar fila %s: %s", "fila_influx", err)
+	}
+	err = ch.QueueBind(
+		"fila_influx",           // nome da fila
+		"userId.#",              // routing key
+		"telemetria_exchange",   // exchange
+		false,
+		nil,
+	)
+	if err != nil {
+		log.Fatal("Erro no bind:", err)
 	}
 
-	for nomeFila, filtro := range configFilas {
-		// Declarar a Fila
-		q, err := ch.QueueDeclare(nomeFila, true, false, false, false, nil)
-		if err != nil {
-			log.Printf("Erro ao declarar fila %s: %s", nomeFila, err)
-			continue
-		}
 
-		// Binding com o FILTRO específico
-		err = ch.QueueBind(
-			q.Name,
-			filtro,                // Aqui vem o filtro (ex: "sensor.*.umidade")
-			"telemetria_exchange",
-			false,
-			nil,
-		)
-		if err != nil {
-			log.Printf("Erro no bind da fila %s com filtro %s: %s", nomeFila, filtro, err)
-		} else {
-			log.Printf("Fila [%s] vinculada com a chave [%s]", nomeFila, filtro)
-		}
-	}
+
+	// // mapa para definir qual Fila escuta qual Tópico
+	// // A chave é o NOME DA FILA e o valor é a ROUTING KEY (o filtro)
+	// configFilas := map[string]string{
+	// 	"fila_influx":    "sensor.#",          // Recebe TUDO (umidade, temperatura, etc)
+	// 	"fila_streaming": "sensor.#",          // Recebe TUDO para o dashboard
+	// 	"fila_cache":     "sensor.#",  		   // Recebe TUDO
+	// }
+
+	// for nomeFila, filtro := range configFilas {
+	// 	// Declarar a Fila
+	// 	q, err := ch.QueueDeclare(nomeFila, true, false, false, false, nil)
+	// 	if err != nil {
+	// 		log.Printf("Erro ao declarar fila %s: %s", nomeFila, err)
+	// 		continue
+	// 	}
+
+	// 	// Binding com o FILTRO específico
+	// 	err = ch.QueueBind(
+	// 		q.Name,
+	// 		filtro,                // Aqui vem o filtro (ex: "sensor.*.umidade")
+	// 		"telemetria_exchange",
+	// 		false,
+	// 		nil,
+	// 	)
+	// 	if err != nil {
+	// 		log.Printf("Erro no bind da fila %s com filtro %s: %s", nomeFila, filtro, err)
+	// 	} else {
+	// 		log.Printf("Fila [%s] vinculada com a chave [%s]", nomeFila, filtro)
+	// 	}
+	// }
 
 	log.Println("Infraestrutura configurada com roteamento seletivo!")
 }
