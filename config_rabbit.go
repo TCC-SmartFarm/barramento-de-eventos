@@ -49,7 +49,7 @@ func main() {
 	}
 	err = ch.QueueBind(
 		"fila_influx",           // nome da fila
-		"userId.#",              // routing key
+		"device.#",              // routing key
 		"telemetria_exchange",   // exchange
 		false,
 		nil,
